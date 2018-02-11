@@ -150,27 +150,46 @@ request(queryUrl, function(error, response, body) {
 
 
 //----------------------------------------------------------------------------------
-
 function doWhatItSays() {
+	var songName = process.argv[3];
 	fs.readFile("random.txt", "utf8", function(error, data){
 		if (error) {
-			console.log("Error: Can't read random.txt file -- " + error);
-			return;
-		} else {
+			console.log(error);
+		} 
+			
+			var newArray = data.split(",");
 
-		//splits the data in the text into an array
-		var newData = data.split(',');
-		console.log(newData);
+			action = newArray[0];
+			argument = newArray[1];
+			//console.log(argument);
 
-		spotifyThisSong(newData[1]);
-		//console.log(newData[1]);
-	};
-}
+			var songName = argument;
+			console.log(songName);
+
+			spotify.search({ type: 'track', query: songName }, function(err, data) {
+  			if (err) {
+        	console.log('Error occured: ' + err); 
+        	return;
+   			} else {
+
+    		var songInfo = data.tracks.items;
+        	//An array to hold the information
+        	var data = [];
+
+    		for (var i = 0; i < 5; i++) {
+    		data.push({
+            "Artist ":  songInfo[i].artists[0].name,
+            "Song: " : songInfo[i].name,
+            "Preview Link: " : songInfo[i].preview_url,
+            "Album the song is from: " : songInfo[i].album.name,
+            });
+
+        }
+    }
+        console.log(data);
+
+		}
+	)}
 )}
-//Pseudo-code
-//I couldn't figure how to get the data in the random text to do what the command told it to do
-//new Data [1] is the name of the song in random text file; it brings up random artists and songs
-
-
 
 
